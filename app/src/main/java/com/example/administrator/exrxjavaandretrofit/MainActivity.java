@@ -15,6 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,26 +40,33 @@ public class MainActivity extends AppCompatActivity {
                         .addConverterFactory(GsonConverterFactory.create())
                         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                         .build();
-                Phone phone=retrofit.create(Phone.class);
+                final Phone phone=retrofit.create(Phone.class);
                 phone.getHaoMa(meditview.getText().toString(), key)
+                        .map(new Func1<PhoneNumInfo, String>() {
+                            @Override
+                            public String call(PhoneNumInfo phoneNumInfo) {
+                                return phoneNumInfo.getResult().getCity();
+                            }
+                        })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<PhoneNumInfo>() {
+                        .subscribe(new Subscriber<String>() {
                             @Override
                             public void onCompleted() {
-                                Log.i("onCompleted", "onCompleted");
+
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.i("onError", e.getMessage());
+
                             }
 
                             @Override
-                            public void onNext(PhoneNumInfo phoneNumInfo) {
-                                mtext.setText(phoneNumInfo.getResult().getCity());
+                            public void onNext(String s) {
+                            mtext.setText(s);
                             }
                         });
+
 
 
             }

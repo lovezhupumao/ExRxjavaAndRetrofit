@@ -66,6 +66,26 @@ public class MainActivity extends AppCompatActivity {
                             mtext.setText(s);
                             }
                         });
+                phone.getHaoMa(meditview.getText().toString(), key)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<PhoneNumInfo>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(PhoneNumInfo phoneNumInfo) {
+                                mtext.setText(phoneNumInfo.getResult().getCity());
+                            }
+                        });
+
 
 
 

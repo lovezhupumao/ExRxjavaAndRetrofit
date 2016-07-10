@@ -10,9 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -89,6 +93,59 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+            }
+        });
+        Button btn=(Button)findViewById(R.id.flatmapbtn);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final FlatMapModel model=new FlatMapModel(new Course("math","0"),"20103177","zpm");
+
+//                Observable observable=Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
+//                    @Override
+//                    public void call(Subscriber<? super FlatMapModel> subscriber) {
+//                        subscriber.onNext();
+//                    }
+//                });
+              final Observable observable= Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
+                  @Override
+                  public void call(Subscriber<? super FlatMapModel> subscriber) {
+                      subscriber.onNext(model);
+                  }
+              });
+
+                observable.flatMap(new Func1<FlatMapModel,Observable<Course>>(){
+                    @Override
+                    public Observable<Course> call(final FlatMapModel flatMapModel) {
+                        return Observable.create(new Observable.OnSubscribe<Course>(){
+                            @Override
+                            public void call(Subscriber<? super Course> subscriber) {
+                                subscriber.onNext(flatMapModel.getCourse());
+                            }
+                        });
+                    }
+                }).map(new Func1<Course,String>(){
+                    @Override
+                    public String call(Course course) {
+                        return course.getClassName();
+                    }
+                }).subscribe(new Subscriber<String>(){
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("************",e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                    Log.i("--------------",s);
+                    }
+                });
             }
         });
 

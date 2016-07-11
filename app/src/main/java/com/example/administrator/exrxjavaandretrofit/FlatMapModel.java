@@ -1,7 +1,7 @@
 package com.example.administrator.exrxjavaandretrofit;
 
 /**
- * Created by Administrator on 2016/7/10 0010.
+ * Created by zpm on 2016/7/10 0010.
  */
 public class FlatMapModel {
 

@@ -11,11 +11,9 @@ public class Course {
         this.className = className;
         this.id = id;
     }
-
     public String getClassName() {
         return className;
     }
-
     public void setClassName(String className) {
         this.className = className;
     }

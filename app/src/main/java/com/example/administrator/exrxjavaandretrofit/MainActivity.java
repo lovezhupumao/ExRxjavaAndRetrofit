@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 subscriber.onNext(String.valueOf(count));
             }
         });
-        
+
         RxView.clicks(mBtnSource)
                 .skip(3).subscribe(new Action1<Void>() {
             @Override

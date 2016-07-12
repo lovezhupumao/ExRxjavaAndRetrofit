@@ -11,6 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.widget.RxTextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +23,9 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.android.plugins.RxAndroidPlugins;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -57,23 +62,16 @@ public class MainActivity extends AppCompatActivity {
                 subscriber.onNext(String.valueOf(count));
             }
         });
-        Observer observer=new Observer<String>() {
+        
+        RxView.clicks(mBtnSource)
+                .skip(3).subscribe(new Action1<Void>() {
             @Override
-            public void onCompleted() {
-
+            public void call(Void aVoid) {
+                mBtnDest.setText(count+"");
             }
+        });
 
-            @Override
-            public void onError(Throwable e) {
 
-            }
-
-            @Override
-            public void onNext(String o) {
-            mBtnDest.setText(o);
-            }
-        };
-        observable.subscribe(observer);
         retrofitAndRxjava();
         flatMap();
 

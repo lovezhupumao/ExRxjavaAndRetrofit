@@ -29,5 +29,15 @@
         android:text="FlatMapTest"
         android:id="@+id/flatmapbtn"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/react_source"
+        android:text="发送者"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/react_dest"
+        android:text="接收内容"/>
 
 </LinearLayout>

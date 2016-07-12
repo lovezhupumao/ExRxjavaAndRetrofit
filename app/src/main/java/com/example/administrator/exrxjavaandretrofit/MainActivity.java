@@ -18,6 +18,7 @@ import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView mtext;
     private EditText meditview;
     private Button   mBtn;
+    private Button mBtnSource;
+    private Button mBtnDest;
+    private int count=0;
     private String key="2f121eb8bf260e938df638ec3cc2e5d4";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,102 @@ public class MainActivity extends AppCompatActivity {
         mtext=(TextView)findViewById(R.id.mytext);
         meditview=(EditText)findViewById(R.id.myedit);
         mBtn=(Button)findViewById(R.id.btn);
+        mBtnSource=(Button)findViewById(R.id.react_source);
+        mBtnDest=(Button)findViewById(R.id.react_dest);
+        mBtnSource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count++;
+            }
+        });
+
+        Observable observable=Observable.create(new Observable.OnSubscribe<String>(){
+
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext(String.valueOf(count));
+            }
+        });
+        Observer observer=new Observer<String>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(String o) {
+            mBtnDest.setText(o);
+            }
+        };
+        observable.subscribe(observer);
+        retrofitAndRxjava();
+        flatMap();
+
+    }
+
+    private void flatMap() {
+        Button btn=(Button)findViewById(R.id.flatmapbtn);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final FlatMapModel model=new FlatMapModel(new Course("math","0"),"20103177","zpm");
+
+//                Observable observable=Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
+//                    @Override
+//                    public void call(Subscriber<? super FlatMapModel> subscriber) {
+//                        subscriber.onNext();
+//                    }
+//                });
+              final Observable observable= Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
+                  @Override
+                  public void call(Subscriber<? super FlatMapModel> subscriber) {
+                      subscriber.onNext(model);
+                  }
+              });
+
+                observable.flatMap(new Func1<FlatMapModel,Observable<Course>>(){
+                    @Override
+                    public Observable<Course> call(final FlatMapModel flatMapModel) {
+                        return Observable.create(new Observable.OnSubscribe<Course>(){
+                            @Override
+                            public void call(Subscriber<? super Course> subscriber) {
+                                subscriber.onNext(flatMapModel.getCourse());
+                            }
+                        });
+                    }
+                }).map(new Func1<Course,String>(){
+                    @Override
+                    public String call(Course course) {
+                        return course.getClassName();
+                    }
+                }).subscribe(new Subscriber<String>(){
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("***********-----*",e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                    Log.i("--------------",s);
+                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void retrofitAndRxjava() {
         mBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,61 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        Button btn=(Button)findViewById(R.id.flatmapbtn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final FlatMapModel model=new FlatMapModel(new Course("math","0"),"20103177","zpm");
-
-//                Observable observable=Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
-//                    @Override
-//                    public void call(Subscriber<? super FlatMapModel> subscriber) {
-//                        subscriber.onNext();
-//                    }
-//                });
-              final Observable observable= Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
-                  @Override
-                  public void call(Subscriber<? super FlatMapModel> subscriber) {
-                      subscriber.onNext(model);
-                  }
-              });
-
-                observable.flatMap(new Func1<FlatMapModel,Observable<Course>>(){
-                    @Override
-                    public Observable<Course> call(final FlatMapModel flatMapModel) {
-                        return Observable.create(new Observable.OnSubscribe<Course>(){
-                            @Override
-                            public void call(Subscriber<? super Course> subscriber) {
-                                subscriber.onNext(flatMapModel.getCourse());
-                            }
-                        });
-                    }
-                }).map(new Func1<Course,String>(){
-                    @Override
-                    public String call(Course course) {
-                        return course.getClassName();
-                    }
-                }).subscribe(new Subscriber<String>(){
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("***********-----*",e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                    Log.i("--------------",s);
-                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
     }
 
     @Override

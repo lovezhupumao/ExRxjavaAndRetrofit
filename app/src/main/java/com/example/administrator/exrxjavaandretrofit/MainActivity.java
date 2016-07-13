@@ -85,12 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final FlatMapModel model=new FlatMapModel(new Course("math","0"),"20103177","zpm");
 
-//                Observable observable=Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
-//                    @Override
-//                    public void call(Subscriber<? super FlatMapModel> subscriber) {
-//                        subscriber.onNext();
-//                    }
-//                });
+
               final Observable observable= Observable.create(new Observable.OnSubscribe<FlatMapModel>(){
                   @Override
                   public void call(Subscriber<? super FlatMapModel> subscriber) {

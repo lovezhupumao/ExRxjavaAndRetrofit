@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         retrofitAndRxjava();
         flatMap();
 

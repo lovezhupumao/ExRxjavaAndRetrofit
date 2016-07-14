@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 count++;
             }
         });
-
         Observable observable=Observable.create(new Observable.OnSubscribe<String>(){
 
             @Override
